@@ -1,6 +1,6 @@
 Geocoder.configure(
   lookup: :mapbox,
-  api_key: ENV['MAPBOX_API_KEY'],
+  api_key: ENV.fetch['MAPBOX_API_KEY'],
 
   units: :km,
   use_https: true,
