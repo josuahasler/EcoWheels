@@ -49,21 +49,30 @@ class Shipment < ApplicationRecord
   end
 
   def geocode_start_and_end
-    if start_location
+    if start_location.present?
       geocoded = Geocoder.search(start_location).first
+  
       if geocoded
         self.start_latitude = geocoded.latitude
         self.start_longitude = geocoded.longitude
+      else
+        errors.add(:start_location, "could not be found")
       end
     end
-
-    if end_location
+  
+    if end_location.present?
       geocoded = Geocoder.search(end_location).first
+  
       if geocoded
         self.end_latitude = geocoded.latitude
         self.end_longitude = geocoded.longitude
+      else
+        errors.add(:end_location, "could not be found")
       end
     end
+  rescue StandardError => e
+    Rails.logger.error("Geocoding failed: #{e.class}: #{e.message}")
+    errors.add(:base, "Could not calculate shipment locations. Please try again.")
   end
 
   def set_city_to_end_location
